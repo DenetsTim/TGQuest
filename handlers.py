@@ -1,12 +1,14 @@
 from aiogram import types, F, Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
+
 from time import sleep
 
 import kb, text
 
 router = Router()
 beauty_text = open('data/beauty/text.txt', 'r', encoding="utf-8").read().split('-')
+photo = FSInputFile("photo.png")
 
 @router.message(Command('start'))
 async def start_handler(msg: Message):
@@ -17,7 +19,6 @@ async def start_handler(msg: Message):
 @router.message(F.text == "◀️ Выйти в меню")
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu)
-    await msg.edit_reply_markup(reply_markup=types.ReplyKeyboardRemove())
 
 @router.callback_query(F.data == 'beauty')
 async def beauty(clbck: CallbackQuery):
@@ -25,7 +26,7 @@ async def beauty(clbck: CallbackQuery):
     for i in range(1, len(beauty_text)):
         sleep(0.1)
         await message.edit_text(beauty_text[i])
-    await clbck.message.answer(text.beauty_exit, reply_markup=kb.exit_kb)
+    await clbck.message.answer_photo(photo, "Nya ❤️")
 
 @router.callback_query(F.data == 'start_quest')
 async def start_quest(clbck: CallbackQuery):
